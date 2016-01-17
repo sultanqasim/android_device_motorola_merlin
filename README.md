@@ -1,22 +1,43 @@
-Unified Device Tree for Moto G Turbo (merlin)
-============================================
+#Squid TWRP tree for Moto G Turbo
 
-The Motorola Moto G Turbo (codenamed _"merlin"_) is a mid-range smartphone
-from Motorola Mobility. It was released in November 2015.
+##Dependencies:
+(you probably don't need most of these)
+````
+sudo apt-get install bison build-essential curl flex git gnupg gperf libesd0-dev liblz4-tool libncurses5-dev libsdl1.2-dev libwxgtk2.8-dev libxml2 libxml2-utils lzop openjdk-6-jdk openjdk-6-jre pngcrush schedtool squashfs-tools xsltproc zip zlib1g-dev
+sudo apt-get install g++-multilib gcc-multilib lib32ncurses5-dev lib32readline-gplv2-dev lib32z1-dev
+````
+You also need the repo tool for cloning Android source trees.
 
-Basic   | Spec Sheet
--------:|:-------------------------
-CPU     | Octa-core 1.7/1.2 GHz Cortex-A53
-Chipset | Qualcomm MSM8939 Snapdragon 615
-GPU     | Adreno 405
-Memory  | 2 GB RAM
-Shipped Android Version | 5.1.1
-Storage | 16 GB
-MicroSD | Up to 32 GB
-Battery | Li-Ion 2470mAh battery
-Display | 720 x 1280 pixels, 5.0 inches (~294 ppi pixel density)
-Camera  | 13 MP, 4160 x 2340 pixels, autofocus, LED flash
+##Set up and get the repo:
+````
+mkdir ~/omni-twrp-tree
+cd ~/omni-twrp-tree
+repo init -u https://github.com/sultanqasim/twrp_recovery_manifest.git -b android-5.1
+mkdir -p .repo/local_manifests
+````
 
-Copyright 2016 - The CyanogenMod Project.
+Create a file .repo/local_manifests/motorola.xml and paste this in
+````
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest>
+    <project name="sultanqasim/android_device_motorola_surnia" path="device/motorola/surnia" remote="github" revision="twrp" />
+    <project name="sultanqasim/android_device_motorola_osprey" path="device/motorola/osprey" remote="github" revision="twrp" />
+    <project name="sultanqasim/android_device_motorola_merlin" path="device/motorola/merlin" remote="github" revision="twrp" />
+    <project name="sultanqasim/android_device_motorola_lux" path="device/motorola/lux" remote="github" revision="twrp" />
+    <project name="sultanqasim/android_kernel_motorola_msm8916" path="kernel/motorola/msm8916" remote="github" revision="squid_marshmallow" />
+    <project name="CyanogenMod/android_device_qcom_common" path="device/qcom/common" remote="github" revision="cm-12.1" />
+</manifest>
+````
 
-![Moto G Turbo](https://wiki.cyanogenmod.org/images/thumb/8/81/Osprey.png/314px-Osprey.png "Moto G Turbo")
+Now fetch the code
+````
+repo sync
+````
+
+##Building:
+````
+source build/envsetup.sh
+breakfast merlin
+make clean
+make -j5 recoveryimage
+````
